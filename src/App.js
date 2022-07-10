@@ -2,6 +2,7 @@ import { useState } from "react";
 
 function App() {
   const [gridInt, setGridInt] = useState([]);
+  const [gridStars, setGridStars] = useState([]);
   const [grids, setGrids] = useState([]);
   const [isActive, setIsActive] = useState(false);
 
@@ -12,13 +13,30 @@ function App() {
   const checkInt = (i) => {
     let elem = document.getElementById(i);
 
+    setGridInt(gridInt.filter((el) => el !== i))
+    elem.classList.remove('grid-btn-active');
+
     if(gridInt.length <= 4) {
       if(gridInt.includes(i)) {
-        elem.classList.remove('grid-btn-active');
         return null;
       }
       setGridInt([...gridInt, i]);
       elem.classList.add('grid-btn-active');
+    }
+  }
+
+  const checkStar = (s) => {
+    let elem = document.getElementById("s"+s);
+
+    setGridStars(gridStars.filter((el) => el !== s))
+    elem.classList.remove('grid-star-btn-active');
+
+    if(gridStars.length <= 1) {
+      if(gridStars.includes(s)) {
+        return null;
+      }
+      setGridStars([...gridStars, s]);
+      elem.classList.add('grid-star-btn-active');
     }
   }
 
@@ -35,28 +53,44 @@ function App() {
     
   }
 
-  let result = range(1, 50);
+  let numbers = range(1, 50);
+  let stars = range(1, 12);
 
   console.log(gridInt.length);
   console.log(gridInt.sort());
+
+  
+  console.log(gridStars.length);
+  console.log(gridStars.sort());
+
   console.log(grids);
   
   return (
     <div className="main-container">
       <div className="grid-game">
-        {result.map((i) => (
+        {numbers.map((i) => (
           <>
           <button
             id={i} 
             className='grid-btn'
             value={i} 
             onClick={() => checkInt(i)}
-            // style={{ 
-            //   backgroundColor: isActive ? '#001367' : null, 
-            //   color: isActive ? 'white' : null 
-            // }}
           >
             {i}
+          </button>
+          </>
+        ))}
+      </div>
+      <div className="stars-grid">
+      {stars.map((s) => (
+          <>
+          <button
+            id={"s"+s} 
+            className='grid-star-btn'
+            value={s} 
+            onClick={() => checkStar(s)}
+          >
+            {s}
           </button>
           </>
         ))}
