@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const [gridInt, setGridInt] = useState([]);
   const [gridStars, setGridStars] = useState([]);
   const [grids, setGrids] = useState([]);
-  const [isActive, setIsActive] = useState(false);
+  const [drawArrInt, setDrawArrInt] = useState([]);
+  const [drawArrStars, setDrawArrStars] = useState([]);
+  // const [drawArr, setDrawArr] = useState([]);
+
+  useEffect(() => {
+    let a = buildDraw();
+    setTimeout(() => {
+      console.log(a);
+    }, 5000)
+  }, [])
 
   const range = (start, end) => {
     return Array(end - start + 1).fill().map((_, idx) => start + idx)
@@ -41,31 +50,65 @@ function App() {
   }
 
   const clearGrid = () => {
-    setGridInt([]);
+    setGrids([]);
   }
 
   const confGrid = () => {
-    if(gridInt.length === 5) {
-      setGrids([{...grids, gridInt}]);
+    if(gridInt.length === 5 && gridStars.length === 2) {
+      setGrids([{...grids, gridInt, gridStars}]);
     }else {
-      console.log("Erreur: Il faut 5 chiffres.")
+      console.log("Erreur: Il faut 5 chiffres et 2 étoiles.")
     }
     
+  }
+
+  const randomNumberInRange = (min, max, tab) => {
+    let array = null;
+    if(tab === 'Int') {
+      array = drawArrInt;
+    }else {
+      array = drawArrStars;
+    }
+
+    let rand = Math.floor(Math.random() * (max - min + 1)) + min;
+    if(!array.includes(rand)) {
+      return rand;
+    }else{
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+  }
+
+  const buildDraw = () => {
+    if(drawArrInt.length < 5) {
+      setDrawArrInt([...drawArrInt, randomNumberInRange(1,50, 'Int')])
+    }
+
+    if(drawArrStars.length < 2) {
+      setDrawArrStars([...drawArrStars, randomNumberInRange(1,12, 'Stars')])
+    }
+
+    return [drawArrInt.sort(), drawArrStars.sort()];
+  }
+
+  const compareResults = async () => {
+    let draw = await buildDraw();
+    console.log(draw);
   }
 
   let numbers = range(1, 50);
   let stars = range(1, 12);
 
-  console.log(gridInt.length);
-  console.log(gridInt.sort());
+  // console.log(gridInt.length);
+  // console.log(gridInt.sort());
 
   
-  console.log(gridStars.length);
-  console.log(gridStars.sort());
+  // console.log(gridStars.length);
+  // console.log(gridStars.sort());
 
-  console.log(grids);
+  //console.log(grids);
   
   return (
+    <>
     <div className="main-container">
       <div className="grid-game">
         {numbers.map((i) => (
@@ -94,18 +137,31 @@ function App() {
           </button>
           </>
         ))}
-      </div>
-      <div>
-        <button onClick={() => clearGrid()}>Effacer</button>
-        <button onClick={() => confGrid()}>Valider</button>
-      </div>
-      <div className="resume">
-          <h2>Mes grilles</h2>
-          {grids.map((i) => (
-            i.gridInt
-          ))}
+        <button onClick={() => confGrid()}>Ajouter</button>
       </div>
     </div>
+    <div className="resume">
+      <div className="title">
+          <h2>Mes grilles</h2>
+      </div>
+      <div className="grid-game">
+        {grids.map((i) => (
+          i.gridInt.sort().map((el) => (
+            <button style={{cursor: "initial"}} disabled className="grid-btn grid-btn-active">{el}</button>
+          ))          
+        ))}
+        {grids.map((i) => (
+          i.gridStars.sort().map((el) => (
+            <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
+          ))          
+        ))}
+        <button onClick={() => clearGrid()}><i className="fa-solid fa-trash-can"></i></button>
+      </div>
+      <div>
+        <button onClick={() => compareResults()}>Jouer</button>
+      </div>  
+    </div>
+    </>
   );
 }
 

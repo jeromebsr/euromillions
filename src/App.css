@@ -13,15 +13,12 @@ body {
   justify-content: center;
   max-width: 810px;
   margin: 0 auto 30px;
+  margin-bottom: 100px;
 }
 
 .grid-game {
-  width: 400px;
+  width: 1200px;
   height: auto;
-}
-
-.resume {
-  
 }
 
 .grid-btn {
@@ -85,4 +82,19 @@ body {
 .grid-star-btn-active {
   background: url('./assets/img/star_after.svg') transparent no-repeat center 0;
   color: white;
+}
+
+.resume {
+  flex: 0 0 180px;
+  max-width: 810px;
+  margin: 0 auto 30px;
+}
+
+.title {
+  flex-grow: 10;
+  width: 100%;
+}
+
+.played-grids {
+
 }
