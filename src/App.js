@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 function App() {
   const [gridInt, setGridInt] = useState([]);
@@ -7,13 +7,6 @@ function App() {
   const [drawArrInt, setDrawArrInt] = useState([]);
   const [drawArrStars, setDrawArrStars] = useState([]);
   // const [drawArr, setDrawArr] = useState([]);
-
-  useEffect(() => {
-    let a = buildDraw();
-    setTimeout(() => {
-      console.log(a);
-    }, 5000)
-  }, [])
 
   const range = (start, end) => {
     return Array(end - start + 1).fill().map((_, idx) => start + idx)
@@ -72,9 +65,7 @@ function App() {
 
     let rand = Math.floor(Math.random() * (max - min + 1)) + min;
     if(!array.includes(rand)) {
-      return rand;
-    }else{
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+      return rand
     }
   }
 
@@ -86,13 +77,30 @@ function App() {
     if(drawArrStars.length < 2) {
       setDrawArrStars([...drawArrStars, randomNumberInRange(1,12, 'Stars')])
     }
-
-    return [drawArrInt.sort(), drawArrStars.sort()];
   }
 
+  const testInc = (val) => {
+    let newArr = [];
+    while(val < 5) {
+      
+      newArr[newArr].push(val)
+      
+      val++
+    }
+    setDrawArrInt([...drawArrInt, newArr])
+  }
+
+  testInc(0);
+
   const compareResults = async () => {
-    let draw = await buildDraw();
-    console.log(draw);
+    await buildDraw()
+    if(drawArrInt.includes(undefined) || drawArrStars.includes(undefined)) {
+      setDrawArrInt([]);
+      setDrawArrStars([]);
+      console.log("nouveau tirage ");
+      buildDraw();
+    }
+    console.log(drawArrInt, drawArrStars)
   }
 
   let numbers = range(1, 50);
@@ -151,7 +159,9 @@ function App() {
           ))          
         ))}
         {grids.map((i) => (
-          i.gridStars.sort().map((el) => (
+          i.gridStars
+          .sort((a,b) => (a-b))
+          .map((el) => (
             <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
           ))          
         ))}
@@ -160,6 +170,19 @@ function App() {
       <div>
         <button onClick={() => compareResults()}>Jouer</button>
       </div>  
+      <div className="draw">
+            <h2>Tirage</h2>
+            {drawArrInt
+            .sort((a,b) => (a-b))
+            .map((el) => (
+              <button style={{cursor: "initial"}} disabled className="grid-btn grid-btn-active">{el}</button> 
+            ))}
+            {drawArrStars
+            .sort((a,b) => (a-b))
+            .map((el) => (
+              <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
+            ))}
+      </div>
     </div>
     </>
   );
