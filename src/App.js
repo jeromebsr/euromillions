@@ -64,43 +64,61 @@ function App() {
     }
 
     let rand = Math.floor(Math.random() * (max - min + 1)) + min;
-    if(!array.includes(rand)) {
-      return rand
-    }
+    return rand;
   }
+
+  // const testInc = () => {
+  //   let int = ["chocolat", "chaussure", "avion", "arbre"];
+  //   console.log(int.length);
+
+  //   while(int.length < 10) {
+  //     int.push(randomNumberInRange(1,50, 'Int'))
+  //   }
+
+  //   console.log(int);
+  // }
+
+  // testInc();
 
   const buildDraw = () => {
-    if(drawArrInt.length < 5) {
-      setDrawArrInt([...drawArrInt, randomNumberInRange(1,50, 'Int')])
+    let int = [];
+    let stars = [];
+   
+
+    while(int.length < 5) {
+      let rand = randomNumberInRange(1,50, 'Int');
+      if(!int.includes(rand)) {
+        int.push(rand);
+      }else {
+        int.pop();
+      }
     }
 
-    if(drawArrStars.length < 2) {
-      setDrawArrStars([...drawArrStars, randomNumberInRange(1,12, 'Stars')])
+    while(stars.length < 2) {
+      let rand = randomNumberInRange(1,12, 'Int');
+      if(!stars.includes(rand)) {
+        stars.push(rand);
+      }else {
+        stars.pop();
+      }
     }
+
+    setDrawArrInt(int)
+    setDrawArrStars(stars)
+
+
+    // if(drawArrInt.includes(undefined) || drawArrStars.includes(undefined)) {
+    //   setDrawArrInt([]);
+    //   setDrawArrStars([]);
+    //   console.log("nouveau tirage ");
+    //   buildDraw();
+    // }
+    console.log(drawArrInt, drawArrStars)
   }
-
-  const testInc = (val) => {
-    let newArr = [];
-    while(val < 5) {
-      
-      newArr[newArr].push(val)
-      
-      val++
-    }
-    setDrawArrInt([...drawArrInt, newArr])
-  }
-
-  testInc(0);
 
   const compareResults = async () => {
     await buildDraw()
-    if(drawArrInt.includes(undefined) || drawArrStars.includes(undefined)) {
-      setDrawArrInt([]);
-      setDrawArrStars([]);
-      console.log("nouveau tirage ");
-      buildDraw();
-    }
-    console.log(drawArrInt, drawArrStars)
+    
   }
 
   let numbers = range(1, 50);
