@@ -7,6 +7,7 @@ body {
   padding: 0;
   margin: 0;
 }
+
 .main-container {
   display: flex;
   align-items: flex-start;
@@ -14,6 +15,7 @@ body {
   max-width: 810px;
   margin: 0 auto 30px;
   margin-bottom: 100px;
+  margin-top: 50px;
 }
 
 .grid-game {
@@ -95,6 +97,39 @@ body {
   width: 100%;
 }
 
-.played-grids {
+.action-btn {
+  display: block;
+  color: #fff;
+  border: none;
+  box-shadow: unset;
+  position: relative;
+  transform: translateZ(0);
+  background-color: #282d87;
+  align-items: center;
+  border-radius: 100px;
+  outline: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 12px 64px;
+  gap: 1rem;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: Metropolis-Medium,sans-serif;
+  transition: ease 0.4s;
+}
 
+.action-btn:hover {
+  background-color: #363cb3;
+}
+
+.action-btn:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.grid-error {
+  display: flex;
+  flex-flow: column wrap;
+  color: red;
+  font-size: 14px;
 }

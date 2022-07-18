@@ -6,7 +6,8 @@ function App() {
   const [grids, setGrids] = useState([]);
   const [drawArrInt, setDrawArrInt] = useState([]);
   const [drawArrStars, setDrawArrStars] = useState([]);
-  // const [drawArr, setDrawArr] = useState([]);
+  const [error, setError] = useState("");
+  const [disabled, setDisabled] = useState(true);
 
   const range = (start, end) => {
     return Array(end - start + 1).fill().map((_, idx) => start + idx)
@@ -42,6 +43,34 @@ function App() {
     }
   }
 
+  const generateFlash = () => {
+    let arrInt = [];
+    let arrStars = [];
+    let rand = null;
+
+    while(arrInt.length < 5) {
+      rand = randomNumberInRange(1, 50, 'Int');
+      if(!arrInt.includes(rand)) {
+        checkInt(rand);
+        arrInt.push(rand);
+      }else {
+        arrInt.pop();
+      }
+    }
+
+    while(arrStars < 2) {
+      rand = randomNumberInRange(1, 12, 'Stars');
+      if(!arrStars.includes(rand)) {
+        checkStar(rand);
+        arrStars.push(rand);
+      }else {
+        arrStars.pop();
+      }
+    }
+    
+    console.log(arrInt, arrStars);
+  }
+
   const clearGrid = () => {
     setGrids([]);
   }
@@ -49,8 +78,11 @@ function App() {
   const confGrid = () => {
     if(gridInt.length === 5 && gridStars.length === 2) {
       setGrids([{...grids, gridInt, gridStars}]);
+      setError("");
+      setDisabled(false);
     }else {
-      console.log("Erreur: Il faut 5 chiffres et 2 étoiles.")
+      setDisabled(true);
+      setError("Erreur: Il faut 5 chiffres et 2 étoiles.");
     }
     
   }
@@ -67,19 +99,6 @@ function App() {
     return rand;
   }
 
-  // const testInc = () => {
-  //   let int = ["chocolat", "chaussure", "avion", "arbre"];
-  //   console.log(int.length);
-
-  //   while(int.length < 10) {
-  //     int.push(randomNumberInRange(1,50, 'Int'))
-  //   }
-
-  //   console.log(int);
-  // }
-
-  // testInc();
-
   const buildDraw = () => {
     let int = [];
     let stars = [];
@@ -95,7 +114,7 @@ function App() {
     }
 
     while(stars.length < 2) {
-      let rand = randomNumberInRange(1,12, 'Int');
+      let rand = randomNumberInRange(1,12, 'Stars');
       if(!stars.includes(rand)) {
         stars.push(rand);
       }else {
@@ -105,33 +124,29 @@ function App() {
 
     setDrawArrInt(int)
     setDrawArrStars(stars)
-
-
-    // if(drawArrInt.includes(undefined) || drawArrStars.includes(undefined)) {
-    //   setDrawArrInt([]);
-    //   setDrawArrStars([]);
-    //   console.log("nouveau tirage ");
-    //   buildDraw();
-    // }
-    console.log(drawArrInt, drawArrStars)
   }
 
   const compareResults = async () => {
-    await buildDraw()
-    
+    await buildDraw();
+    let matchInt = [];
+    let matchStars = [];
+
+    gridInt.map((gi) => {
+      if(drawArrInt.includes(gi)) {
+        matchInt.push(gi);
+      }
+     
+    })
+
+    gridStars.map((gs) => {
+      if(drawArrStars.includes(gs)) {
+        matchStars.push(gs);
+      }
+    })
   }
 
   let numbers = range(1, 50);
   let stars = range(1, 12);
-
-  // console.log(gridInt.length);
-  // console.log(gridInt.sort());
-
-  
-  // console.log(gridStars.length);
-  // console.log(gridStars.sort());
-
-  //console.log(grids);
   
   return (
     <>
@@ -163,7 +178,9 @@ function App() {
           </button>
           </>
         ))}
-        <button onClick={() => confGrid()}>Ajouter</button>
+        <button style={{marginBottom: 10}} className="action-btn" onClick={() => generateFlash()}>Flash</button>
+        <button className="action-btn" onClick={() => confGrid()}>Ajouter</button>
+        <div className="grid-error">{error}</div>
       </div>
     </div>
     <div className="resume">
@@ -183,23 +200,29 @@ function App() {
             <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
           ))          
         ))}
-        <button onClick={() => clearGrid()}><i className="fa-solid fa-trash-can"></i></button>
+          <button onClick={() => clearGrid()}><i className="fa-solid fa-trash-can"></i></button>
       </div>
       <div>
-        <button onClick={() => compareResults()}>Jouer</button>
+        <button 
+          disabled={disabled} 
+          className="action-btn" 
+          onClick={() => compareResults()}
+        >
+          Jouer
+        </button>
       </div>  
       <div className="draw">
-            <h2>Tirage</h2>
-            {drawArrInt
-            .sort((a,b) => (a-b))
-            .map((el) => (
-              <button style={{cursor: "initial"}} disabled className="grid-btn grid-btn-active">{el}</button> 
-            ))}
-            {drawArrStars
-            .sort((a,b) => (a-b))
-            .map((el) => (
-              <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
-            ))}
+        <h2>Tirage</h2>
+        {drawArrInt ? drawArrInt
+        .sort((a,b) => (a-b))
+        .map((el) => (
+          <button style={{cursor: "initial"}} disabled className="grid-btn grid-btn-active">{el}</button> 
+        )) : "Tirage prochainement"}
+        {drawArrStars ?  drawArrStars
+        .sort((a,b) => (a-b))
+        .map((el) => (
+          <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
+        )): "Tirage prochainement"}
       </div>
     </div>
     </>
