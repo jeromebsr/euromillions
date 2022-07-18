@@ -72,6 +72,12 @@ function App() {
   }
 
   const clearGrid = () => {
+    for(let i=1; 1 < 50; i++) {
+      let elem = document.getElementById(i);
+      setGridStars(gridStars.filter((el) => el !== i))
+      elem.classList.remove('grid-btn-active');
+      console.log(i, elem);
+    }
     setGrids([]);
   }
 
