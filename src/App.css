@@ -127,6 +127,12 @@ body {
   cursor: not-allowed;
 }
 
+.icon-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
 .grid-error {
   display: flex;
   flex-flow: column wrap;

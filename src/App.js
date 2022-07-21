@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 
 function App() {
   const [gridInt, setGridInt] = useState([]);
@@ -8,6 +8,8 @@ function App() {
   const [drawArrStars, setDrawArrStars] = useState([]);
   const [error, setError] = useState("");
   const [disabled, setDisabled] = useState(true);
+  const [displayed, setDisplayed] = useState(true);
+  const [matchGrid, setMatchGrid] = useState({matchInt: {}, matchStars: {}});
 
   const range = (start, end) => {
     return Array(end - start + 1).fill().map((_, idx) => start + idx)
@@ -48,8 +50,9 @@ function App() {
     let arrStars = [];
     let rand = null;
 
+
     while(arrInt.length < 5) {
-      rand = randomNumberInRange(1, 50, 'Int');
+      rand = randomNumberInRange(1, 50);
       if(!arrInt.includes(rand)) {
         checkInt(rand);
         arrInt.push(rand);
@@ -58,8 +61,8 @@ function App() {
       }
     }
 
-    while(arrStars < 2) {
-      rand = randomNumberInRange(1, 12, 'Stars');
+    while(arrStars.length < 2) {
+      rand = randomNumberInRange(1, 12);
       if(!arrStars.includes(rand)) {
         checkStar(rand);
         arrStars.push(rand);
@@ -68,16 +71,25 @@ function App() {
       }
     }
     
-    console.log(arrInt, arrStars);
+    setGridInt(arrInt);
+    setGridStars(arrStars);
   }
 
   const clearGrid = () => {
-    for(let i=1; 1 < 50; i++) {
+    for(let i=1; i < 50; i++) {
       let elem = document.getElementById(i);
-      setGridStars(gridStars.filter((el) => el !== i))
+      setGridInt(gridInt.filter((el) => el !== i))
       elem.classList.remove('grid-btn-active');
-      console.log(i, elem);
     }
+
+    for(let s=1; s < 12; s++) {
+      let elem = document.getElementById("s"+s);
+      setGridStars(gridStars.filter((el) => el !== s))
+      elem.classList.remove('grid-star-btn-active');
+    }
+  }
+
+  const removeGrid = () => {
     setGrids([]);
   }
 
@@ -90,17 +102,9 @@ function App() {
       setDisabled(true);
       setError("Erreur: Il faut 5 chiffres et 2 étoiles.");
     }
-    
   }
 
-  const randomNumberInRange = (min, max, tab) => {
-    let array = null;
-    if(tab === 'Int') {
-      array = drawArrInt;
-    }else {
-      array = drawArrStars;
-    }
-
+  const randomNumberInRange = (min, max) => {
     let rand = Math.floor(Math.random() * (max - min + 1)) + min;
     return rand;
   }
@@ -111,7 +115,7 @@ function App() {
    
 
     while(int.length < 5) {
-      let rand = randomNumberInRange(1,50, 'Int');
+      let rand = randomNumberInRange(1,50);
       if(!int.includes(rand)) {
         int.push(rand);
       }else {
@@ -120,40 +124,48 @@ function App() {
     }
 
     while(stars.length < 2) {
-      let rand = randomNumberInRange(1,12, 'Stars');
+      let rand = randomNumberInRange(1,12);
       if(!stars.includes(rand)) {
         stars.push(rand);
       }else {
         stars.pop();
       }
     }
-
-    setDrawArrInt(int)
-    setDrawArrStars(stars)
+ 
+    if(int.length === 5 && stars.length === 2) {
+      console.log("lenght int + stars OK");
+      setDrawArrInt(int)
+      setDrawArrStars(stars)
+      compareResults(int, stars)
+    }
   }
 
-  const compareResults = async () => {
-    await buildDraw();
+  const compareResults = (int, stars) => {
+    setDisabled(true);
+    setDisplayed(false);
+
     let matchInt = [];
     let matchStars = [];
 
+    
     gridInt.map((gi) => {
-      if(drawArrInt.includes(gi)) {
+      if(int.includes(gi)) {
         matchInt.push(gi);
       }
-     
     })
 
     gridStars.map((gs) => {
-      if(drawArrStars.includes(gs)) {
+      if(stars.includes(gs)) {
         matchStars.push(gs);
       }
     })
+
+    setMatchGrid({matchInt, matchStars});
   }
 
   let numbers = range(1, 50);
   let stars = range(1, 12);
-  
+  console.log(matchGrid);
   return (
     <>
     <div className="main-container">
@@ -173,19 +185,36 @@ function App() {
       </div>
       <div className="stars-grid">
       {stars.map((s) => (
-          <>
-          <button
-            id={"s"+s} 
-            className='grid-star-btn'
-            value={s} 
-            onClick={() => checkStar(s)}
-          >
-            {s}
-          </button>
-          </>
+        <>
+        <button
+          id={"s"+s} 
+          className='grid-star-btn'
+          value={s} 
+          onClick={() => checkStar(s)}
+        >
+          {s}
+        </button>
+        </>
         ))}
-        <button style={{marginBottom: 10}} className="action-btn" onClick={() => generateFlash()}>Flash</button>
-        <button className="action-btn" onClick={() => confGrid()}>Ajouter</button>
+        <button 
+          style={{
+            marginBottom: 10, 
+            display: displayed ? "block" : "none"
+          }} 
+          className="action-btn" 
+          onClick={() => generateFlash()}
+        >
+          <i className="fa-solid fa-bolt"></i> Flash
+        </button>
+        <button 
+         style={{
+          display: displayed ? "block" : "none"
+        }}
+          className="action-btn" 
+          onClick={() => confGrid()}
+        >
+          Ajouter
+        </button>
         <div className="grid-error">{error}</div>
       </div>
     </div>
@@ -195,24 +224,57 @@ function App() {
       </div>
       <div className="grid-game">
         {grids.map((i) => (
-          i.gridInt.sort().map((el) => (
-            <button style={{cursor: "initial"}} disabled className="grid-btn grid-btn-active">{el}</button>
-          ))          
+          i.gridInt
+          .sort((a,b) => (a-b))
+          .map((el) => (
+            <button 
+              style={{
+                cursor: "initial",
+                opacity: Array.isArray(matchGrid.matchInt) && !matchGrid.matchInt.includes(el) ? 0.4 : 1
+              }} 
+              disabled 
+              className="grid-btn grid-btn-active"
+            >
+              {el}
+            </button>
+          ))
         ))}
         {grids.map((i) => (
           i.gridStars
           .sort((a,b) => (a-b))
           .map((el) => (
-            <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
-          ))          
+            <button 
+              style={{
+                cursor: "initial",
+                opacity: Array.isArray(matchGrid.matchStars) && !matchGrid.matchStars.includes(el) ? 0.4 : 1
+              }} 
+              disabled 
+              className="grid-star-btn grid-star-btn-active"
+            >
+              {el}
+            </button>
+          ))
         ))}
-          <button onClick={() => clearGrid()}><i className="fa-solid fa-trash-can"></i></button>
+      <div className="grid-options">
+          <button 
+            className="icon-btn" 
+            style={{
+              display: displayed ? "block" : "none"
+            }}
+            onClick={() => removeGrid()}
+          >
+            <i className="fa-solid fa-trash-can"></i>
+          </button>
+        </div>    
       </div>
       <div>
         <button 
+         style={{
+          display: displayed ? "block" : "none"
+        }}
           disabled={disabled} 
           className="action-btn" 
-          onClick={() => compareResults()}
+          onClick={() => buildDraw()}
         >
           Jouer
         </button>
@@ -230,6 +292,15 @@ function App() {
           <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
         )): "Tirage prochainement"}
       </div>
+      <button
+        style={{
+          display: displayed === false ? "block" : "none"
+        }}
+        className="action-btn"
+        onClick={() => window.location.reload()}
+      >
+        <i className="fa-solid fa-rotate-right"></i> Rejouer
+      </button>
     </div>
     </>
   );
