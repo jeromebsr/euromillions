@@ -139,3 +139,23 @@ body {
   color: red;
   font-size: 14px;
 }
+
+.sold-error-container {
+  display: block;
+  margin-left: 100px;
+}
+
+.header {
+  display: block;
+  margin-left: 400px;
+}
+
+/* CREDITs */
+
+.credit {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 1200px;
+  height: auto;
+}
