@@ -15,7 +15,7 @@ function App() {
   const [matchGrid, setMatchGrid] = useState({matchInt: {}, matchStars: {}});
   const [earning, setEarning] = useState(0);
   let jackpot = 230000000;
-
+;
   useEffect(() => {
     localStorage.setItem('credit', credit);
   }, [credit]);
@@ -119,7 +119,7 @@ function App() {
     return rand;
   }
 
-  const buildDraw = async () => {
+  const buildDraw = () => {
     if(credit < 2.50) {
       setSoldError(true);
       return false;
@@ -130,23 +130,23 @@ function App() {
     let stars = [];
    
 
-    while(int.length < 5) {
-      let rand = randomNumberInRange(1,50);
-      if(!int.includes(rand)) {
-        int.push(rand);
-      }else {
-        int.pop();
-      }
-    }
+    // while(int.length < 5) {
+    //   let rand = randomNumberInRange(1,50);
+    //   if(!int.includes(rand)) {
+    //     int.push(rand);
+    //   }else {
+    //     int.pop();
+    //   }
+    // }
 
-    while(stars.length < 2) {
-      let rand = randomNumberInRange(1,12);
-      if(!stars.includes(rand)) {
-        stars.push(rand);
-      }else {
-        stars.pop();
-      }
-    }
+    // while(stars.length < 2) {
+    //   let rand = randomNumberInRange(1,12);
+    //   if(!stars.includes(rand)) {
+    //     stars.push(rand);
+    //   }else {
+    //     stars.pop();
+    //   }
+    // }
     
      // CHEAT RESULT 
      int = [1,2,3,4,5];
@@ -154,17 +154,10 @@ function App() {
      // END CHEAT
 
     if(int.length === 5 && stars.length === 2) {
-      console.log("lenght int + stars OK");
       setDrawArrInt(int)
       setDrawArrStars(stars)
       compareResults(int, stars)
     }
-
-
-
-    await compareResults(int, stars);
-    await calcEarning();
-    await dispatchEarning();
   }
 
   const compareResults = (int, stars) => {
@@ -256,17 +249,23 @@ function App() {
   }
 
   const dispatchEarning = () => {
-    setCredit(credit+earning)  
+    setCredit(+credit+earning)  
   }
 
   const reloadCredit = () => {
-    setCredit(1000);
+    setCredit(10);
     setSoldError(false);
     return window.location.reload(false);
   }
 
   const currencyFormat = (num) => {
     return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
+  
+  const handlePlay = async () => {
+    buildDraw()
+    calcEarning()
+    dispatchEarning()
   }
 
   let numbers = range(1, 50);
@@ -398,7 +397,7 @@ function App() {
           }}
             disabled={disabled} 
             className="action-btn" 
-            onClick={() => buildDraw()}
+            onClick={() => handlePlay()}
           >
             Jouer
           </button>
