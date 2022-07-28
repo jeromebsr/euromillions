@@ -21,7 +21,6 @@ function App() {
 
   useEffect(() => {
     calcEarning()
-
   }, [matchGrid]);
 
   useEffect(() => {
@@ -70,6 +69,10 @@ function App() {
     let arrStars = [];
     let rand = null;
 
+    if(gridInt > 1 || gridStars > 1) {
+      clearGrid();
+    }
+
 
     while(arrInt.length < 5) {
       rand = randomNumberInRange(1, 50);
@@ -96,6 +99,9 @@ function App() {
   }
 
   const clearGrid = () => {
+    setGridInt([]);
+    setGridStars([]);
+
     for(let i=1; i < 50; i++) {
       let elem = document.getElementById(i);
       setGridInt(gridInt.filter((el) => el !== i))
@@ -156,11 +162,6 @@ function App() {
         stars.pop();
       }
     }
-    
-     // CHEAT RESULT 
-    //  int = [1,2,3,4,5];
-    //  stars = [1,2];
-     // END CHEAT
 
     if(int.length === 5 && stars.length === 2) {
       setDrawArrInt(int)
@@ -202,62 +203,47 @@ function App() {
     
     switch(intL + '-' + starsL) {
       case "5-2": 
-        console.log('Rang 1');
         setEarning(230000000);
         break;
       case "5-1":
-        console.log('Rang 2');
         setEarning(4413400.80);
         break;
       case "5-0":
-        console.log('Rang 3');
         setEarning(30174.50);
         break;
       case "4-2": 
-        console.log('Rang 4');
         setEarning(1402.70);
         break;
       case "4-1": 
-        console.log('Rang 5');
         setEarning(135.60);
         break;
       case "3-2":
-        console.log('Rang 6');
         setEarning(69.30);
         break;  
       case "4-0": 
-        console.log('Rang 7');
         setEarning(+credit+41);
         break;
       case "2-2":
-        console.log('Rang 8');
         setEarning(17);
         break;
       case "3-1":
-        console.log('Rang 9');
         setEarning(12.30);
         break;  
       case "3-0":
-        console.log('Rang 10');
         setEarning(9.30);
         break;  
       case "1-2":
-        console.log('Rang 11');
         setEarning(8);
         break;  
       case "2-1":
-        console.log('Rang 12');
+        setEarning(5.90);
         break;  
       case "2-0":
-        console.log('Rang 13');
         setEarning(3.90);
         break;  
       default: 
         setEarning(0);
     }
-
-    console.log(intL);
-    console.log(starsL);
   }
 
   const reloadCredit = () => {
@@ -354,7 +340,7 @@ function App() {
               <button 
                 style={{
                   cursor: "initial",
-                  opacity: Array.isArray(matchGrid.matchInt) && !matchGrid.matchInt.includes(el) ? 0.4 : 1
+                  opacity: Array.isArray(matchGrid.matchInt) && !matchGrid.matchInt.includes(el) && drawArrInt.length > 0 ? 0.4 : 1
                 }} 
                 disabled 
                 className="grid-btn grid-btn-active"
@@ -370,7 +356,7 @@ function App() {
               <button 
                 style={{
                   cursor: "initial",
-                  opacity: Array.isArray(matchGrid.matchStars) && !matchGrid.matchStars.includes(el) ? 0.4 : 1
+                  opacity: Array.isArray(matchGrid.matchStars) && !matchGrid.matchStars.includes(el) && drawArrStars.length > 0 ? 0.4 : 1
                 }} 
                 disabled 
                 className="grid-star-btn grid-star-btn-active"
