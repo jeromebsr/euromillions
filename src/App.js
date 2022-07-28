@@ -366,7 +366,7 @@ function App() {
             ))
           ))}          
           <div className="grid-options">
-            {disabled === false ? 'Total : '+ currencyFormat(2.50) : null}
+            {disabled === false ? 'Mise totale : '+ currencyFormat(2.50) : null}
           </div>   
             {!displayed ? 'Vos gains : ' + currencyFormat(earning) : null}    
         </div>

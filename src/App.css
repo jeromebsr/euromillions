@@ -159,3 +159,29 @@ body {
   width: 1200px;
   height: auto;
 }
+
+/* MOBILE */
+
+@media only screen and (max-width: 600px) {
+  body {
+    width: 100%;
+  }
+
+  .header {
+    margin: 0;
+  }
+
+  .grid-game {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    top: 0;
+  }
+
+  .stars-grid {
+    display: flex;
+    align-self: flex-end;
+    flex-wrap: wrap;
+    position: absolute;
+  }
+}
