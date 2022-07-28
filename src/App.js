@@ -332,7 +332,7 @@ function App() {
         <div className="title">
             <h2>Mes grilles</h2>
         </div>
-        <div className="grid-game">
+        <div className="grid-game" style={{ flexWrap: 'nowrap' }}>
           {grids.map((i) => (
             i.gridInt
             .sort((a,b) => (a-b))
@@ -364,17 +364,17 @@ function App() {
                 {el}
               </button>
             ))
-          ))}          
-          <div className="grid-options">
-            {disabled === false ? 'Mise totale : '+ currencyFormat(2.50) : null}
-          </div>   
-            {!displayed ? 'Vos gains : ' + currencyFormat(earning) : null}    
+          ))}         
         </div>
+        <div className="grid-options">
+            {!disabled ? 'Mise totale : '+ currencyFormat(2.50) : null}
+            {!displayed ? 'Vos gains : ' + currencyFormat(earning) : null} 
+          </div>   
         <div>
           <button 
-          style={{
-            display: displayed ? "block" : "none"
-          }}
+            style={{
+              display: displayed ? "block" : "none"
+            }}
             disabled={disabled} 
             className="action-btn" 
             onClick={() => buildDraw()}
@@ -383,7 +383,9 @@ function App() {
           </button>
         </div>  
         <div className="draw">
-          <h2>Tirage</h2>
+          <div className="title">
+            <h2>Tirage</h2>
+          </div>
           {drawArrInt ? drawArrInt
           .sort((a,b) => (a-b))
           .map((el) => (

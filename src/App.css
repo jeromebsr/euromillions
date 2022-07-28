@@ -171,6 +171,14 @@ body {
     margin: 0;
   }
 
+  .credit {
+   width: auto;
+  }
+
+  .main-container, .resume {
+    flex-direction: column;
+  }
+
   .grid-game {
     display: flex;
     flex-wrap: wrap;
@@ -182,6 +190,22 @@ body {
     display: flex;
     align-self: flex-end;
     flex-wrap: wrap;
-    position: absolute;
+    align-items: baseline;
+  }
+
+  .title {
+    display: flex;
+    flex-wrap: nowrap;
+    align-self: flex-start;
+  }
+
+  .resume {
+    display: flex;
+    flex-wrap: no-wrap;
+  }
+
+  .draw {
+    display: flex;
+    flex-wrap: no-wrap;
   }
 }
