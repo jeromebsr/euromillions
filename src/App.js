@@ -12,13 +12,23 @@ function App() {
   const [soldError, setSoldError] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [displayed, setDisplayed] = useState(true);
-  const [matchGrid, setMatchGrid] = useState({matchInt: {}, matchStars: {}});
-  const [earning, setEarning] = useState(0);
-  let jackpot = 230000000;
-;
+  const [matchGrid, setMatchGrid] = useState({matchInt: [], matchStars: []});
+  const [earning, setEarning] = useState();
+
   useEffect(() => {
     localStorage.setItem('credit', credit);
   }, [credit]);
+
+  useEffect(() => {
+    calcEarning()
+
+  }, [matchGrid]);
+
+  useEffect(() => {
+    if(earning > 0) {
+      setCredit(credit+earning);
+    }
+  },[earning])
   
   const range = (start, end) => {
     return Array(end - start + 1).fill().map((_, idx) => start + idx)
@@ -128,29 +138,28 @@ function App() {
     }
     let int = [];
     let stars = [];
-   
 
-    // while(int.length < 5) {
-    //   let rand = randomNumberInRange(1,50);
-    //   if(!int.includes(rand)) {
-    //     int.push(rand);
-    //   }else {
-    //     int.pop();
-    //   }
-    // }
+    while(int.length < 5) {
+      let rand = randomNumberInRange(1,50);
+      if(!int.includes(rand)) {
+        int.push(rand);
+      }else {
+        int.pop();
+      }
+    }
 
-    // while(stars.length < 2) {
-    //   let rand = randomNumberInRange(1,12);
-    //   if(!stars.includes(rand)) {
-    //     stars.push(rand);
-    //   }else {
-    //     stars.pop();
-    //   }
-    // }
+    while(stars.length < 2) {
+      let rand = randomNumberInRange(1,12);
+      if(!stars.includes(rand)) {
+        stars.push(rand);
+      }else {
+        stars.pop();
+      }
+    }
     
      // CHEAT RESULT 
-     int = [1,2,3,4,5];
-     stars = [1,2];
+    //  int = [1,2,3,4,5];
+    //  stars = [1,2];
      // END CHEAT
 
     if(int.length === 5 && stars.length === 2) {
@@ -167,23 +176,25 @@ function App() {
     let matchInt = [];
     let matchStars = [];
 
-    
     gridInt.map((gi) => {
       if(int.includes(gi)) {
+        console.log("true int");
         matchInt.push(gi);
       }
     })
 
     gridStars.map((gs) => {
       if(stars.includes(gs)) {
+        console.log("true star");
         matchStars.push(gs);
       }
     })
 
-    setMatchGrid({matchInt, matchStars});
+    return setMatchGrid({matchInt, matchStars});
   }
 
   const calcEarning = () => {
+    console.log(matchGrid);
     let intL = matchGrid.matchInt.length;
     let starsL = matchGrid.matchStars.length;
 
@@ -192,7 +203,7 @@ function App() {
     switch(intL + '-' + starsL) {
       case "5-2": 
         console.log('Rang 1');
-        setEarning(jackpot);
+        setEarning(230000000);
         break;
       case "5-1":
         console.log('Rang 2');
@@ -242,14 +253,11 @@ function App() {
         setEarning(3.90);
         break;  
       default: 
-        console.log('Aucun gain');
+        setEarning(0);
     }
+
     console.log(intL);
     console.log(starsL);
-  }
-
-  const dispatchEarning = () => {
-    setCredit(+credit+earning)  
   }
 
   const reloadCredit = () => {
@@ -258,19 +266,13 @@ function App() {
     return window.location.reload(false);
   }
 
-  const currencyFormat = (num) => {
-    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  }
-  
-  const handlePlay = async () => {
-    buildDraw()
-    calcEarning()
-    dispatchEarning()
+  const currencyFormat = (number) => {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(number);
   }
 
   let numbers = range(1, 50);
   let stars = range(1, 12);
-  //console.log(matchGrid);
+
   return (
     <>
     {soldError ? (
@@ -288,7 +290,7 @@ function App() {
       <>
       <Credit credit={credit} />
       <div className="header">
-        <h1>Jackpot de {currencyFormat(jackpot)}€</h1>
+        <h1>Jackpot de {currencyFormat(230000000)}</h1>
       </div>
       <div className="main-container">
         <div className="grid-game">
@@ -376,19 +378,11 @@ function App() {
                 {el}
               </button>
             ))
-          ))}
+          ))}          
           <div className="grid-options">
-            <button 
-              className="icon-btn" 
-              style={{
-                display: displayed ? "block" : "none"
-              }}
-              onClick={() => removeGrid()}
-            >
-              <i className="fa-solid fa-trash-can"></i>
-            </button>
+            {disabled === false ? 'Total : '+ currencyFormat(2.50) : null}
           </div>   
-          {!displayed ? 'Vos gains : ' + earning + '€' : null}    
+            {!displayed ? 'Vos gains : ' + currencyFormat(earning) : null}    
         </div>
         <div>
           <button 
@@ -397,7 +391,7 @@ function App() {
           }}
             disabled={disabled} 
             className="action-btn" 
-            onClick={() => handlePlay()}
+            onClick={() => buildDraw()}
           >
             Jouer
           </button>
