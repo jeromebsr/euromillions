@@ -368,7 +368,6 @@ function App() {
         </div>
         <div className="grid-options">
             {!disabled ? 'Mise totale : '+ currencyFormat(2.50) : null}
-            {!displayed ? 'Vos gains : ' + currencyFormat(earning) : null} 
           </div>   
         <div>
           <button 
@@ -386,17 +385,20 @@ function App() {
           <div className="title">
             <h2>Tirage</h2>
           </div>
-          {drawArrInt ? drawArrInt
-          .sort((a,b) => (a-b))
-          .map((el) => (
-            <button style={{cursor: "initial"}} disabled className="grid-btn grid-btn-active">{el}</button> 
-          )) : "Tirage prochainement"}
-          {drawArrStars ?  drawArrStars
-          .sort((a,b) => (a-b))
-          .map((el) => (
-            <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
-          )): "Tirage prochainement"}
+          <div className="grid-game" style={{ flexWrap: 'nowrap' }}>
+            {drawArrInt ? drawArrInt
+            .sort((a,b) => (a-b))
+            .map((el) => (
+              <button style={{cursor: "initial"}} disabled className="grid-btn grid-btn-active">{el}</button> 
+            )) : "Tirage prochainement"}
+            {drawArrStars ?  drawArrStars
+            .sort((a,b) => (a-b))
+            .map((el) => (
+              <button style={{cursor: "initial"}} disabled className="grid-star-btn grid-star-btn-active">{el}</button>
+            )): "Tirage prochainement"}
+          </div>
         </div>
+        {!displayed ? <span className="earning">Vos gains : <b>{currencyFormat(earning)}</b></span> : null} 
         <button
           style={{
             display: displayed === false ? "block" : "none"
